@@ -1,5 +1,7 @@
 /*global self, document, DOMException */
 
+/** MODIFED BY Alvaro Trigo Lopez (look for "alvaro" to find where) **/
+
 /*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js */
 
 // Full polyfill for browsers with no classList support
@@ -2210,7 +2212,6 @@ MediumEditor.extensions = {};
                     return true;
                 }
             }
-
             return false;
         },
 
@@ -5633,10 +5634,15 @@ MediumEditor.extensions = {};
         },
 
         hideToolbar: function () {
-            if (this.isDisplayed()) {
+            if (this.isDisplayed() && this.colorPickerHidden()) { //alvaro
                 this.getToolbarElement().classList.remove('medium-editor-toolbar-active');
                 this.trigger('hideToolbar', {}, this.base.getFocusedElement());
             }
+        },
+
+        //http://jaketrent.com/post/addremove-classes-raw-javascript/
+        hasClass: function(ele,cls) {
+            return !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'));
         },
 
         isToolbarDefaultActionsDisplayed: function () {
@@ -5719,7 +5725,20 @@ MediumEditor.extensions = {};
             }
         },
 
+        colorPickerHidden: function(){ //alvaro
+          var picker = document.querySelector('.sp-container');
+          if(picker){
+            return this.hasClass(picker, 'sp-hidden');
+          }
+          return true;
+        },
+
+        hasClass: function(ele, cls){
+          return !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'));
+        },
+
         checkState: function () {
+          var that = this;
             if (this.base.preventSelectionUpdates) {
                 return;
             }
@@ -5728,7 +5747,7 @@ MediumEditor.extensions = {};
             // hide toolbar
             if (!this.base.getFocusedElement() ||
                     MediumEditor.selection.selectionInContentEditableFalse(this.window)) {
-                return this.hideToolbar();
+                  return this.hideToolbar();
             }
 
             // If there's no selection element, selection element doesn't belong to this editor
